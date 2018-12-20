@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+
+    <title>Title</title>
+</head>
+<body>
+<div class="body-div">
+    <div>
+        {#    <form action="{% url 'spiders:confirm' %}" method="post">#}
+        <form id="formorder">
+            出发地：<input type="text" name="fromstation" value="{{ from_station }}">
+            目的地：<input type="text" name="tostation" value="{{ to_station }}">
+            出发日期：<input type="text" name="date" placeholder="2018-12-12" value="{{ date }}">
+            <br>
+            {#            车次：<input type="text" name="trainnum" id="trainnum" value="{{ trainnum }}">#}
+            席位：<input type="text" name="seat" id="seat" value="硬座">
+            {#            车序号：<input type="text" name="num" id="num" value="{% for num in nums %}{{ num }}--{% endfor %}">#}
+            车序号：
+            {% for train in train_list %}
+                <input type="checkbox" name="num" id="num" checked="checked" value="{{ train.num }}">{{ train.checi }}
+            {% endfor %}
+            <br>
+            {% for passenger in passengers %}
+                <input type="checkbox" name="passengers" value="{{ forloop.counter }}">{{ passenger.passenger_name }}
+            {% endfor %}
+            <br>
+            <input type="button" id="btnorder" value="购票">
+            {#        <input type="submit" value="购票">#}
+
+            <br>
+            {% csrf_token %}
+        </form>
+    </div>
+    <div class="table-div">
+        <table class="table" border="2px">
+            <tr>
+                <th>车序号</th>
+                <th>车次</th>
+                <th>出发时间</th>
+                <th>到达时间</th>
+                <th>历时</th>
+                <th>高级软卧</th>
+                <th>软卧</th>
+                <th>无座</th>
+                <th>硬卧</th>
+                <th>硬座</th>
+                <th>二等座</th>
+                <th>一等座</th>
+                <th>商务座</th>
+                <th>动卧</th>
+            </tr>
+            {% for train in train_list %}
+
+                <tr>
+                    <td>{{ train.num }}</td>
+                    <td>{{ train.checi }}</td>
+                    <td>{{ train.begin_time }}</td>
+                    <td>{{ train.end_time }}</td>
+                    <td>{{ train.lishi }}</td>
+                    <td>{{ train.gjrw }}</td>
+                    <td>{{ train.ruanwo }}</td>
+                    <td>{{ train.wuzuo }}</td>
+                    <td>{{ train.yingwo }}</td>
+                    <td>{{ train.yingzuo }}</td>
+                    <td>{{ train.erdengzuo }}</td>
+                    <td>{{ train.yidengzuo }}</td>
+                    <td>{{ train.shangwuzuo }}</td>
+                    <td>{{ train.dongwo }}</td>
+                </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+    <input type="button" id="msgbtn" value="显示刷新信息">
+    <input type="button" id="finishbtn" value="停止界面刷新">
+    <div id="msgdiv">
+        {{ messages.ERROR }}
+    </div>
+</div>
+</body>
+</html>
+<script>
+    $(function () {
+        console.log(1);
+        $('#btnorder').click(function () {
+            console.log(2);
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'spiders:confirm' %}",
+                data: $('#formorder').serialize(),
+                async: true,
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    console.log(3);
+                    console.log(data.status);
+                    if (data.status == 'success') {
+                        alert(data.msg)
+                    } else if (data.status == 'fail') {
+                        console.log(data);
+                        alert(data.msg)
+                    }
+                },
+            });
+        });
+        var oTimer = null; // 存储将来定时器  对象型
+        var num=1;
+        var re = /^[0-9]+.?[0-9]*$/
+        $("#msgbtn").click(function () {
+            // 启动多次循环 -- 函数名
+            oTimer = setInterval(fnAlert, 2000)
+            function fnAlert() {
+                console.log('刷票显示')
+                $.get("{% url 'spiders:confirm' %}", function (data) {
+                    $("#msgdiv").html(data.train+data.seat+'剩余票数：'+data.count+'.............刷新次数：'+num);
+                    if(data.count==='有'||re.test(parseInt(data.count))){
+                        clearInterval(oTimer);
+                        oTimer = null
+                    }
+                    num+=1
+                });
+            }
+
+        });
+
+        $("#finishbtn").click(function () {
+            // 停止多次循环 -- 函数名
+            clearInterval(oTimer);
+            oTimer = null
+
+        });
+    })
+
+</script>

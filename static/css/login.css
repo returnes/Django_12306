@@ -1,0 +1,22 @@
+.username,.password{
+    width: 230px;
+    height: 25px;
+}
+.checkbox{
+    width: 63px;
+    height: 63px;
+    opacity: 0.3;
+    /*visibility: hidden;*/
+}
+.checkbox-div{
+    margin-top: -150px;
+}
+.login-submit{
+    font-size: 14px;
+    width: 150px;
+    height: 40px;
+    border: none;
+    background: orange;
+    border-radius: 20px;
+
+}

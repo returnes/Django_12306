@@ -1,0 +1,28 @@
+body{
+    background: #31b0d5;
+    margin: 0 0;
+    text-align: center;
+}
+.body-div{
+    width: 800px;
+    height: 600px;
+    margin: 70px auto;
+}
+.table-div{
+    text-align: center;
+    padding-left: 50px;
+}
+.table{
+    border-width: 3px;
+    border-color: orange;
+    /*border-collapse: collapse;*/
+}
+#msgdiv{
+    font-size: 20px;
+    color: red;
+}
+#btnquery,#btnorder,#submit,#msgbtn,#finishbtn{
+    border: none;
+    background: orange;
+    border-radius: 5px;
+}

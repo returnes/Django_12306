@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+{#    <link href="{% static 'css/login.css' %}" rel="stylesheet">#}
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+    {#    <style>#}
+    {#        .table-head{#}
+    {#            position: fixed;#}
+    {#        }#}
+    {#    </style>#}
+
+</head>
+<body>
+<div class="body-div">
+    <div>
+        <form id="formquery">
+            出发地：<input type="text" name="fromstation" id="fromstation" placeholder="例如：北京" value="">
+            目的地：<input type="text" name="tostation" id="tostation" placeholder="例如：沈阳" value="">
+            出发日期：<input type="date" name="date" id="date" placeholder="2018-12-12" value="2018-12-12">
+            <input type="button" id="btnquery" value="提交">
+            {% csrf_token %}
+        </form>
+        <br>
+        <form id='formquery2' action="{% url 'spiders:order' %}" method="post">
+            <div id="baseInfo">
+{#            出发地：<input type="text" name="fromstation" id="fromstation" value="北京">#}
+{#            目的地：<input type="text" name="tostation" id="tostation" value="长春">#}
+{#            日期：<input type="text" name="date" id="date" placeholder="2018-12-12" value="2018-12-12"><br>#}
+{#                <input type="submit" id="submit" value="刷票">#}
+            </div>
+            <div id="cc">
+                {#            <input type="checkbox" name="num" value="1">车次#}
+                {#            <input type="checkbox" name="num" value="2">车次#}
+            </div>
+
+            {% csrf_token %}
+        </form>
+        <br>
+    </div>
+    <div class="table-div">
+        <table class="table" border="2px">
+            <thead class="table-head">
+            <tr>
+                <th>序号</th>
+                <th>车次</th>
+                <th>出发时间</th>
+                <th>到达时间</th>
+                <th>历时</th>
+                <th>高级软卧</th>
+                <th>软卧</th>
+                <th>无座</th>
+                <th>硬卧</th>
+                <th>硬座</th>
+                <th>二等座</th>
+                <th>一等座</th>
+                <th>商务座</th>
+                <th>动卧</th>
+            </tr>
+            </thead>
+            <tbody class="table-body"></tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
+<script>
+
+    $(function () {
+        {#console.log(1);#}
+        $('#btnquery').click(function () {
+            {#console.log(2);#}
+            $.ajax({
+                {#cache: false,#}
+                type: "POST",
+                {#dataType: 'json',#}
+                url: "{% url 'spiders:query' %}",
+                data: $('#formquery').serialize(),
+                async: false,
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    var cc = '\n车次：';
+                    var str = '<tr><th>序号</th><th>车次</th><th>出发时间</th><th>到达时间</th><th>历时</th><th>高级软卧</th><th>软卧</th><th>无座</th><th>硬卧</th><th>硬座</th><th>二等座</th><th>一等座</th><th>商务座</th><th>动卧</th></tr>';
+                    var baseInfo='出发地：<input type="text" name="fromstation" id="fromstation" value="'+data[0]+'">目的地：<input type="text" name="tostation" id="tostation" value="'+data[1]+'">出发日期：<input type="text" name="date" id="date" placeholder="2018-12-12" value="'+data[2]+'"><input type="submit" id="submit" value="进入刷票">\n';
+                    $('#baseInfo').html(baseInfo);
+
+
+
+                    for (var i = 3; i < data.length-3; i++) {
+                        str += '<tr><td>' + data[i].num + '</td><td>' + data[i].checi + '</td><td>' + data[i].begin_time + '</td><td>' + data[i].end_time + '</td><td>' + data[i].lishi + '</td><td>' + data[i].gjrw + '</td><td>' + data[i].ruanwo + '</td><td>' + data[i].wuzuo + '</td><td>' + data[i].yingwo + '</td><td>' + data[i].yingzuo + '</td><td>' + data[i].erdengzuo + '</td><td>' + data[i].yidengzuo + '</td><td>' + data[i].shangwuzuo + '</td><td>' + data[i].dongwo + '</td></tr>';
+                        cc += '<input type="checkbox" name="num" value="' + data[i].num + '"><label>' + data[i].checi + '&nbsp;&nbsp;&nbsp;</label>'
+                    }
+                    $('#cc').html(cc);
+                    $('.table').html(str);
+
+
+                }
+            });
+        });
+
+
+        $('#btnquery2').click(function () {
+            console.log(2);
+            $.ajax({
+                {#cache: false,#}
+                type: "POST",
+                {#dataType: 'json',#}
+                url: "{% url 'spiders:order' %}",
+                data: $('#formquery2').serialize(),
+                async: false,
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function () {
+                    console.log('order is ok')
+                    console.log(data)
+
+                }
+            });
+        })
+
+    })
+
+</script>
