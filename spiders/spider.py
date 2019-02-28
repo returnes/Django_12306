@@ -47,7 +47,7 @@ class Leftquery(object):
         '''余票查询'''
         fromstation = self.station_name(from_station)
         tostation = self.station_name(to_station)
-        url = 'https://kyfw.12306.cn/otn/leftTicket/query?leftTicketDTO.train_date={}&leftTicketDTO.from_station={}&leftTicketDTO.to_station={}&purpose_codes=ADULT'.format(date, fromstation, tostation)
+        url = 'https://kyfw.12306.cn/otn/leftTicket/queryX?leftTicketDTO.train_date={}&leftTicketDTO.from_station={}&leftTicketDTO.to_station={}&purpose_codes=ADULT'.format(date, fromstation, tostation)
         try:
             html = requests.get(url, headers=self.headers, verify=False).json()
             result = html['data']['result']
@@ -63,8 +63,7 @@ class Leftquery(object):
                 #     if info[0] != '' and info[0] != 'null':
                 #         # print(str(num) + '.' + info[3] + '车次还有余票:')
                 #         # print('出发时间:' + info[8] + ' 到达时间:' + info[9] + ' 历时多久:' + info[10] + ' ', end='')
-                #         seat = {21: '高级软卧', 23: '软卧', 26: '无座', 28: '硬卧', 29: '硬座', 30: '二等座', 31: '一等座', 32: '商务座',
-                #                 33: '动卧'}
+                #         seat = {21: '高级软卧', 23: '软卧', 26: '无座', 28: '硬卧', 29: '硬座', 30: '二等座', 31: '一等座', 32: '商务座', 33: '动卧'}
                 #         from_station_no = info[16]
                 #         to_station_no = info[17]
                 #         for j in seat.keys():
