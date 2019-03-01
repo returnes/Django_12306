@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
 import spiders.urls
+from spiders.views import LoginView
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
+    url(r'^$', LoginView.as_view(), name='login'),
     url(r'^spiders/', include('spiders.urls', namespace='spiders')),
 ]

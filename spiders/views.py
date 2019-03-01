@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views.generic.base import View
 from django.http import HttpResponse
 import json
 import time
 
-from spiders.spider import select, Login, Order, Leftquery
+from spiders.spider import Login, Order, Leftquery
 
 query = Leftquery()
 order = Order()
@@ -39,8 +40,8 @@ class LoginView(View):
         # order = Order()
         # order.auth()
 
-        return render(request, 'query.html', {'username': username, 'password': password})
-
+        # return render(request, 'query.html', {'username': username, 'password': password})
+        return redirect(reverse('spiders:query'))
 
 class OrderView(View):
     def get(self, request):
