@@ -37,10 +37,6 @@ class LoginView(View):
         login.captcha(answer_num)  # 填写验证码并验证
         login.login()
 
-        # order = Order()
-        # order.auth()
-
-        # return render(request, 'query.html', {'username': username, 'password': password})
         return redirect(reverse('spiders:query'))
 
 class OrderView(View):
